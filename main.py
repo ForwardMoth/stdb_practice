@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append('tables')
 
 from project_config import *
@@ -6,12 +7,16 @@ from dbconnection import *
 from tables.people_table import *
 from tables.phones_table import *
 
-class Main:
 
+class Main:
     config = ProjectConfig()
     connection = DbConnection(config)
 
     def __init__(self):
+        self.person_id = None
+        self.person_obj = None
+        self.phone_id = None
+        self.phone_obj = None
         DbTable.dbconn = self.connection
         return
 
@@ -63,7 +68,7 @@ class Main:
             return "0"
         else:
             return next_step
-            
+
     def show_people(self):
         self.person_id = -1
         menu = """Просмотр списка людей!
@@ -87,11 +92,13 @@ class Main:
                 print("Пока не реализовано!")
                 return "1"
             elif next_step == "6":
-                self.add_phone()
-                next_step = "5"
+                next_step = self.add_phone()
             elif next_step == "7":
-                print("Пока не реализовано!")
-                next_step = "5"
+                self.find_phone_by_id()
+                next_step = self.edit_phone()
+            elif next_step == "8":
+                self.find_phone_by_id()
+                next_step = self.delete_phone()
             elif next_step == "5":
                 next_step = self.show_phones_by_people()
             # исправление бага с меню для телефонов при вводе неверного значения
@@ -124,23 +131,59 @@ class Main:
             return
         PeopleTable().insert_one(data)
         return
-    # Новая функция для добавление телефонов
-    def add_phone(self):
-        data = [""]
+
+    # Форма ввода для телефона
+    def phone_form(self):
         while True:
-            data[0] = input("Введите номер телефона (1 - отмена): ").strip()
-            if data[0] == "1":
+            phone = input("Введите номер телефона (1 - отмена): ").strip()
+            if phone == "1":
                 return
-            elif len(data[0].strip()) == 0:
+            elif len(phone.strip()) == 0:
                 print("Телефон не может быть пустым! Введите телефон заново")
-            elif len(data[0].strip()) > 12:
+            elif len(phone.strip()) > 12:
                 print("Телефон не может быть длиннее 12 символов! Введите телефон заново")
             else:
+                return phone
+
+    # Новая функция для добавление телефонов
+    def add_phone(self):
+        data = [self.person_id, self.phone_form()]
+        PhonesTable().insert_one(data)
+        return "5"
+
+    # Вспомогательная функция, которая находит нужный номер телефона человека
+    def find_phone_by_id(self):
+        num = -1
+        while True:
+            num = input("Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            while len(num.strip()) == 0:
+                num = input("Пустая строка. Повторите ввод! "
+                            "Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            if num == "0":
+                return "1"
+
+            while not num.strip().isnumeric():
+                num = input("Неверные данные. Повторите ввод! "
+                            "Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            phone = PhonesTable().find_by_position(int(num), self.person_id)
+
+            if not phone:
+                print("Введено число, неудовлетворяющее количеству телефонов!")
+            else:
+                self.phone_id = int(phone[0])
+                self.phone_obj = phone
                 break
 
-        data.insert(0, self.person_id)
-        PhonesTable().insert_one(data)
-        return
+    # Новая функция для редактирования номера телефона
+    def edit_phone(self):
+        phone = self.phone_form()
+        PhonesTable().update(phone, self.phone_obj[1])
+        return "5"
+
+    # Новая функция для удаления номера телефона
+    def delete_phone(self):
+        PhonesTable().delete(self.phone_obj[1])
+        return "5"
 
     def show_phones_by_people(self):
         if self.person_id == -1:
@@ -153,7 +196,7 @@ class Main:
                     return "1"
                 # проверка на то, что строка состоит из цифр
                 while not num.strip().isnumeric():
-                    num = input("Строка содержит символы. Повторите ввод! "
+                    num = input("Неверный данные. Повторите ввод! "
                                 "Укажите номер строки, в которой записана интересующая Вас персона (0 - отмена): ")
                 person = PeopleTable().find_by_position(int(num))
                 if not person:
@@ -168,14 +211,16 @@ class Main:
         if len(lst) == 0:
             print("Нет телефонов")
         else:
-            print("Телефоны:")
-            for i in lst:
-                print(i[1])
+            phone_show_text = """Просмотр списка телефонов!\n№\tТелефон"""
+            print(phone_show_text)
+            for i in range(len(lst)):
+                print(str(i + 1) + "\t" + lst[i][1])
         menu = """Дальнейшие операции:
     0 - возврат в главное меню;
     1 - возврат в просмотр людей;
     6 - добавление нового телефона;
-    7 - удаление телефона;
+    7 - редактирование телефона;
+    8 - удаление телефона;
     9 - выход."""
         print(menu)
         return self.read_next_step()
@@ -197,9 +242,9 @@ class Main:
             elif current_menu == "3":
                 self.show_add_person()
                 current_menu = "1"
-        print("До свидания!")    
+        print("До свидания!")
         return
+
 
 m = Main()
 m.main_cycle()
-    

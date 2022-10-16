@@ -86,14 +86,18 @@ class Main:
             if next_step == "4":
                 print("Пока не реализовано!")
                 return "1"
-            elif next_step == "6" or next_step == "7":
+            elif next_step == "6":
+                self.add_phone()
+                next_step = "5"
+            elif next_step == "7":
                 print("Пока не реализовано!")
                 next_step = "5"
             elif next_step == "5":
                 next_step = self.show_phones_by_people()
-            elif next_step != "0" and next_step != "9" and next_step != "3":
-                print("Выбрано неверное число! Повторите ввод!")
-                return "1"
+            # исправление бага с меню для телефонов при вводе неверного значения
+            elif next_step != "0" and next_step != "9" and next_step != "1" and next_step != "3":
+                print("Выбрано неверное значение! Повторите ввод!")
+                next_step = self.read_next_step()
             else:
                 return next_step
 
@@ -120,15 +124,37 @@ class Main:
             return
         PeopleTable().insert_one(data)
         return
+    # Новая функция для добавление телефонов
+    def add_phone(self):
+        data = [""]
+        while True:
+            data[0] = input("Введите номер телефона (1 - отмена): ").strip()
+            if data[0] == "1":
+                return
+            elif len(data[0].strip()) == 0:
+                print("Телефон не может быть пустым! Введите телефон заново")
+            elif len(data[0].strip()) > 12:
+                print("Телефон не может быть длиннее 12 символов! Введите телефон заново")
+            else:
+                break
+
+        data.insert(0, self.person_id)
+        PhonesTable().insert_one(data)
+        return
 
     def show_phones_by_people(self):
         if self.person_id == -1:
             while True:
-                num = input("Укажите номер строки, в которой записана интересующая Вас персона (0 - отмена):")
+                num = input("Укажите номер строки, в которой записана интересующая Вас персона (0 - отмена): ")
                 while len(num.strip()) == 0:
-                    num = input("Пустая строка. Повторите ввод! Укажите номер строки, в которой записана интересующая Вас персона (0 - отмена):")
+                    num = input("Пустая строка. Повторите ввод! "
+                                "Укажите номер строки, в которой записана интересующая Вас персона (0 - отмена): ")
                 if num == "0":
                     return "1"
+                # проверка на то, что строка состоит из цифр
+                while not num.strip().isnumeric():
+                    num = input("Строка содержит символы. Повторите ввод! "
+                                "Укажите номер строки, в которой записана интересующая Вас персона (0 - отмена): ")
                 person = PeopleTable().find_by_position(int(num))
                 if not person:
                     print("Введено число, неудовлетворяющее количеству людей!")
@@ -137,10 +163,14 @@ class Main:
                     self.person_obj = person
                     break
         print("Выбран человек: " + self.person_obj[2] + " " + self.person_obj[0] + " " + self.person_obj[3])
-        print("Телефоны:")
         lst = PhonesTable().all_by_person_id(self.person_id)
-        for i in lst:
-            print(i[1])
+        # Проверяем есть ли в таблице номера телефонов для человека
+        if len(lst) == 0:
+            print("Нет телефонов")
+        else:
+            print("Телефоны:")
+            for i in lst:
+                print(i[1])
         menu = """Дальнейшие операции:
     0 - возврат в главное меню;
     1 - возврат в просмотр людей;
@@ -148,8 +178,6 @@ class Main:
     7 - удаление телефона;
     9 - выход."""
         print(menu)
-        return self.read_next_step()
-
         return self.read_next_step()
 
     def main_cycle(self):

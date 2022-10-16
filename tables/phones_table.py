@@ -21,5 +21,4 @@ class PhonesTable(DbTable):
         sql += ", ".join(self.primary_key())
         cur = self.dbconn.conn.cursor()
         cur.execute(sql, str(pid))
-        return cur.fetchall()           
-
+        return cur.fetchall()

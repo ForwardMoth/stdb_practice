@@ -7,9 +7,6 @@ from dbconnection import *
 from tables.people_table import *
 from tables.phones_table import *
 
-#hello world
-
-#hll wrld!!!!!!!
 class Main:
     config = ProjectConfig()
     connection = DbConnection(config)
@@ -110,27 +107,50 @@ class Main:
             else:
                 return next_step
 
+    # Форма ввода имени
+    def form_first_name(self):
+        while True:
+            first_name = input("Введите имя (1 - отмена): ").strip()
+            if first_name == "1":
+                return
+            if len(first_name.strip()) == 0:
+                print("Имя не может быть пустым!")
+            elif len(first_name.strip()) > 32:
+                print("Имя имеет недопустимую длину!")
+            else:
+                return first_name
+    # Форма ввода фамилии
+    def form_last_name(self):
+        while True:
+            last_name = input("Введите фамилию (1 - отмена): ").strip()
+            if last_name == "1":
+                return
+            if len(last_name.strip()) == 0:
+                print("Фамилия не может быть пустой!")
+            elif len(last_name.strip()) > 32:
+                print("Фамилия имеет недопустимую длину!")
+            else:
+                return last_name
+    # Форма ввода отчества
+    def form_second_name(self):
+        while True:
+            second_name = input("Введите отчество (1 - отмена): ").strip()
+            if second_name == "1":
+                return
+            if len(second_name.strip()) == 0:
+                print("Отчество не может быть пустой!")
+            elif len(second_name.strip()) > 32:
+                print("Отчество имеет недопустимую длину!")
+            else:
+                return second_name
+    # Добавление человека
     def show_add_person(self):
-        # Не реализована проверка на максимальную длину строк. Нужно доделать самостоятельно!
-        data = []
-        data.append(input("Введите имя (1 - отмена): ").strip())
-        if data[0] == "1":
-            return
-        while len(data[0].strip()) == 0:
-            data[0] = input("Имя не может быть пустым! Введите имя заново (1 - отмена):").strip()
-            if data[0] == "1":
+        data = [self.form_first_name(), self.form_last_name(), self.form_second_name()]
+        # Проверяем элементы на пустоту
+        for i in data:
+            if i is None:
                 return
-        data.append(input("Введите фамилию (1 - отмена): ").strip())
-        if data[1] == "1":
-            return
-        while len(data[1].strip()) == 0:
-            data[1] = input("Фамилия не может быть пустой! Введите фамилию заново (1 - отмена):").strip()
-            if data[1] == "1":
-                return
-        # добавил пробел
-        data.append(input("Введите отчество (1 - отмена): ").strip())
-        if data[2] == "1":
-            return
+
         PeopleTable().insert_one(data)
         return
 
@@ -158,15 +178,15 @@ class Main:
         num = -1
         while True:
             num = input("Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
-            while len(num.strip()) == 0:
-                num = input("Пустая строка. Повторите ввод! "
-                            "Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            if len(num.strip()) == 0:
+                print("Пустая строка. Повторите ввод! ")
+
             if num == "0":
                 return "1"
 
-            while not num.strip().isnumeric():
-                num = input("Неверные данные. Повторите ввод! "
-                            "Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            if not num.strip().isnumeric():
+                print("Неверные данные. Повторите ввод! ")
+
             phone = PhonesTable().find_by_position(int(num), self.person_id)
 
             if not phone:

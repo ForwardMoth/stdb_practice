@@ -19,7 +19,7 @@ class DbTable:
         return ['id']
 
     def column_names_without_id(self):
-        res = sorted(self.columns().keys(), key = lambda x: x)
+        res = list(self.columns().keys())
         if 'id' in res:
             res.remove('id')
         return res
@@ -76,9 +76,11 @@ class DbTable:
 
     def all(self):
         sql = "SELECT * FROM " + self.table_name()
-        sql += " ORDER BY "
-        sql += ", ".join(self.primary_key())
+        # sql += " ORDER BY "
+        # sql += ", ".join(self.primary_key())
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
-        return cur.fetchall()        
+        return cur.fetchall()
+
+
         

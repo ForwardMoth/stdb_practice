@@ -7,9 +7,6 @@ from dbconnection import *
 from tables.people_table import *
 from tables.phones_table import *
 
-#hello world
-
-#hll wrld!!!!!!!
 class Main:
     config = ProjectConfig()
     connection = DbConnection(config)
@@ -51,7 +48,8 @@ class Main:
 Основное меню (выберите цифру в соответствии с необходимым действием): 
     1 - просмотр людей;
     2 - сброс и инициализация таблиц;
-    9 - выход."""
+    9 - выход;
+    10 - поиск человека по фамилии."""
         print(menu)
         return
 
@@ -65,7 +63,7 @@ class Main:
             self.db_insert_somethings()
             print("Таблицы созданы заново!")
             return "0"
-        elif next_step != "1" and next_step != "9":
+        elif next_step != "1" and next_step != "9" and next_step != "10":
             print("Выбрано неверное число! Повторите ввод!")
             return "0"
         else:
@@ -244,9 +242,34 @@ class Main:
             elif current_menu == "3":
                 self.show_add_person()
                 current_menu = "1"
+            elif current_menu == "10":
+                self.find_people_by_lastname()
+                current_menu = "1"
         print("До свидания!")
         return
 
+    def find_people_by_lastname(self):
+        l_name = ""
+        while True:
+            l_name = input("Укажите фамилию человека, которого надо найти: ")
+            #if len(l_name.strip()) == 0:
+            #    print("Пустая строка. Повторите ввод! ")
+
+            #if num == "0":
+             #   return "1"
+
+            #if not num.strip().isnumeric():
+             #   print("Неверные данные. Повторите ввод! ")
+
+            lastname = PeopleTable().find_by_last_name(l_name)
+
+            #if not phone:
+                #print("Введено число, неудовлетворяющее количеству телефонов!")
+            #else:
+            self.person_id = lastname[0]
+            self.person_obj = lastname
+            print("Найдена запись: " + self.person_obj[2] + " " + self.person_obj[0] + " " + self.person_obj[3])
+            break
 
 m = Main()
 m.main_cycle()

@@ -80,5 +80,7 @@ class DbTable:
         sql += ", ".join(self.primary_key())
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
-        return cur.fetchall()        
-        
+        return cur.fetchall()
+
+    def lname(self):
+        return ['last_name']

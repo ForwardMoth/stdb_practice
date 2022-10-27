@@ -76,12 +76,19 @@ class Main:
         print(menu)
         lst = PeopleTable().all()
         for i in lst:
-            print(str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[0]) + "\t" + str(i[3]))
+            # 0 - имя
+            # 1 - id   
+            # 2 - Фамилия 
+            # 3 - Отчество 
+            print(str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]))
         menu = """Дальнейшие операции: 
     0 - возврат в главное меню;
     3 - добавление нового человека;
     4 - удаление человека;
     5 - просмотр телефонов человека;
+    6 - ВВОДИМ НОМЕР и потом смотрим номера человека, но у него нет этого номера(?);
+    7 - вводим номер телефона, потом новый номер, потом номер человека, потом этого номера нет ???
+    8 - требует ввести позицию телефона, потом позицию человека и выводит всю инфу о человеке ???
     9 - выход."""
         print(menu)
         return
@@ -108,27 +115,50 @@ class Main:
             else:
                 return next_step
 
+    # Форма ввода имени
+    def form_first_name(self):
+        while True:
+            first_name = input("Введите имя (1 - отмена): ").strip()
+            if first_name == "1":
+                return
+            if len(first_name.strip()) == 0:
+                print("Имя не может быть пустым!")
+            elif len(first_name.strip()) > 32:
+                print("Имя имеет недопустимую длину!")
+            else:
+                return first_name
+    # Форма ввода фамилии
+    def form_last_name(self):
+        while True:
+            last_name = input("Введите фамилию (1 - отмена): ").strip()
+            if last_name == "1":
+                return
+            if len(last_name.strip()) == 0:
+                print("Фамилия не может быть пустой!")
+            elif len(last_name.strip()) > 32:
+                print("Фамилия имеет недопустимую длину!")
+            else:
+                return last_name
+    # Форма ввода отчества
+    def form_second_name(self):
+        while True:
+            second_name = input("Введите отчество (1 - отмена): ").strip()
+            if second_name == "1":
+                return
+            if len(second_name.strip()) == 0:
+                print("Отчество не может быть пустым!")
+            elif len(second_name.strip()) > 32:
+                print("Отчество имеет недопустимую длину!")
+            else:
+                return second_name
+    # Добавление человека
     def show_add_person(self):
-        # Не реализована проверка на максимальную длину строк. Нужно доделать самостоятельно!
-        data = []
-        data.append(input("Введите имя (1 - отмена): ").strip())
-        if data[0] == "1":
-            return
-        while len(data[0].strip()) == 0:
-            data[0] = input("Имя не может быть пустым! Введите имя заново (1 - отмена):").strip()
-            if data[0] == "1":
+        data = [self.form_last_name(), self.form_first_name(), self.form_second_name()]
+        # Проверяем элементы на пустоту
+        for i in data:
+            if i is None:
                 return
-        data.append(input("Введите фамилию (1 - отмена): ").strip())
-        if data[1] == "1":
-            return
-        while len(data[1].strip()) == 0:
-            data[1] = input("Фамилия не может быть пустой! Введите фамилию заново (1 - отмена):").strip()
-            if data[1] == "1":
-                return
-        # добавил пробел
-        data.append(input("Введите отчество (1 - отмена): ").strip())
-        if data[2] == "1":
-            return
+
         PeopleTable().insert_one(data)
         return
 
@@ -156,15 +186,15 @@ class Main:
         num = -1
         while True:
             num = input("Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
-            while len(num.strip()) == 0:
-                num = input("Пустая строка. Повторите ввод! "
-                            "Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            if len(num.strip()) == 0:
+                print("Пустая строка. Повторите ввод! ")
+
             if num == "0":
                 return "1"
 
-            while not num.strip().isnumeric():
-                num = input("Неверные данные. Повторите ввод! "
-                            "Укажите номер строки, в которой записан интересующий Вас номер телефона (0 - отмена): ")
+            if not num.strip().isnumeric():
+                print("Неверные данные. Повторите ввод! ")
+
             phone = PhonesTable().find_by_position(int(num), self.person_id)
 
             if not phone:
@@ -218,7 +248,10 @@ class Main:
         menu = """Дальнейшие операции:
     0 - возврат в главное меню;
     1 - возврат в просмотр людей;
-    6 - добавление нового телефона;
+    3 - ? СОЗДАНИЕ ЧЕЛОВЕКА ?
+    4 - не реализовано 
+    5 - ? ПРОСМОТР СПИСКА ТЕЛЕФОНОВ ?
+    6 - добавление нового телефона (для выбранного человека);
     7 - редактирование номера телефона;
     8 - удаление телефона;
     9 - выход."""

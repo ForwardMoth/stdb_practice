@@ -1,2 +1,4 @@
 __pycache__
 .idea
+tables/__pycache__
+project.db

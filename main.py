@@ -75,7 +75,11 @@ class Main:
         print(menu)
         lst = PeopleTable().all()
         for i in lst:
-            print(str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[0]) + "\t" + str(i[3]))
+            # 0 - имя
+            # 1 - id   
+            # 2 - Фамилия 
+            # 3 - Отчество 
+            print(str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]))
         menu = """Дальнейшие операции: 
     0 - возврат в главное меню;
     3 - добавление нового человека;
@@ -148,7 +152,7 @@ class Main:
                 return second_name
     # Добавление человека
     def show_add_person(self):
-        data = [self.form_first_name(), self.form_last_name(), self.form_second_name()]
+        data = [self.form_last_name(), self.form_first_name(), self.form_second_name()]
         # Проверяем элементы на пустоту
         for i in data:
             if i is None:

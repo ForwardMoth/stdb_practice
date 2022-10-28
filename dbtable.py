@@ -76,8 +76,8 @@ class DbTable:
 
     def all(self):
         sql = "SELECT * FROM " + self.table_name()
-        # sql += " ORDER BY "
-        # sql += ", ".join(self.primary_key())
+        sql += " ORDER BY "
+        sql += ", ".join(self.primary_key())
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
         return cur.fetchall()

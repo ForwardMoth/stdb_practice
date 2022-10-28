@@ -54,11 +54,34 @@ class Main:
         pt.drop()
         return
 
+    def find_people_by_lastname(self):
+        while True:
+            l_name = input("Укажите фамилию человека, которого надо найти: (0 - отмена) ")
+            if len(l_name.strip()) == 0:
+               print("Пустая строка. Повторите ввод! ")
+
+            if len(l_name.strip()) > 32:
+               print("Слишком длинная фамилия. Повторите ввод! ")
+
+            if l_name == "0":
+               return "0"
+
+            lastname = PeopleTable().find_by_last_name(l_name)
+
+            if lastname is not None:
+                self.person_id = lastname[0]
+                self.person_obj = lastname
+                print("Найдена запись: " + self.person_obj[2] + " " + self.person_obj[0] + " " + self.person_obj[3])
+                return "0"
+            else:
+                print("Запись не найдена! Повторите ввод! ")
+
     def show_main_menu(self):
         menu = """Добро пожаловать!
 Основное меню (выберите цифру в соответствии с необходимым действием):
     1 - просмотр людей;
     2 - просмотр групп;
+    3 - поиск человека по фамилии;
     8 - сброс и инициализация таблиц;
     9 - выход."""
         print(menu)
@@ -322,6 +345,9 @@ class Main:
             elif current_menu == "2":
                 print("Не реализовано! ")
                 current_menu = "0"
+            elif current_menu == "3":
+                # testing
+                current_menu = self.find_people_by_lastname()
             elif current_menu == "8":
                 current_menu = self.db_drop_init()
             else:

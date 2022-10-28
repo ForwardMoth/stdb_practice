@@ -17,13 +17,5 @@ class PeopleTable(DbTable):
         sql += " LIMIT 1 OFFSET :offset"
         cur = self.dbconn.conn.cursor()
         cur.execute(sql, {"offset": num - 1})
-        return cur.fetchone()  
-
-    def all(self):
-        sql = "SELECT id, last_name, first_name, second_name FROM " + self.table_name()
-        sql += " ORDER BY "
-        sql += ", ".join(self.primary_key())
-        cur = self.dbconn.conn.cursor()
-        cur.execute(sql)
-        return cur.fetchall()
+        return cur.fetchone()       
     

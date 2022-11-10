@@ -25,7 +25,6 @@ class Main:
         phonesTable = PhonesTable()
         peopleTable.create()
         phonesTable.create()
-        # Добавление новой таблицы
         groupsTable = GroupsTable()
         groupsTable.create()
         return
@@ -40,7 +39,6 @@ class Main:
         pht.insert_one([1, "123"])
         pht.insert_one([2, "123"])
         pht.insert_one([3, "123"])
-        # Добавление новой таблицы
         gt.insert_one(["C19-702", "ИАСБ", "75"])
         gt.insert_one(["C19-712", "ИАСБ", "75"])
         gt.insert_one(["C19-711", "ЭКБЕЗ", "75"])
@@ -99,12 +97,13 @@ class Main:
 
     def show_people(self):
         self.person_id = -1
-        menu = """Просмотр списка людей!
-№\tФамилия\tИмя\tОтчество"""
+        menu = """Просмотр списка людей!"""
         print(menu)
+        columns = ["№", "Фамилия", "Имя", "Отчество"]
+        self.formatted_print(columns)
         lst = PeopleTable().all()
         for i in lst:
-            print(str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]))
+            self.formatted_print(list(i))
         return
 
     # Форма ввода имени
@@ -179,10 +178,13 @@ class Main:
             if len(lst) == 0:
                 print("Нет телефонов")
             else:
-                phone_show_text = """Просмотр списка телефонов!\n№\tТелефон"""
+                phone_show_text = """Просмотр списка телефонов!"""
                 print(phone_show_text)
+                columns = ["№", "Телефон"]
+                self.formatted_print(columns)
                 for i in range(len(lst)):
-                    print(str(i + 1) + "\t" + lst[i][1])
+                    a = [i, lst[i][1]]
+                    self.formatted_print(a)
         return
 
     # Форма ввода для телефона
@@ -334,6 +336,78 @@ class Main:
                 print("Выбрано неверное значение! Повторите ввод!")
                 current_step = self.read_next_step()
 
+    def show_group_menu(self):
+        menu = """Дальнейшие операции:
+        0 - Возврат в главное меню;
+        3 - Добавление новой группы;
+        4 - Изменение информации о группе;
+        5 - Изменение номера группы; 
+        6 - Удаление группы;
+        7 - Добавление человека в группу
+        8 - Не реализовано
+        9 - Выход."""
+        print(menu)
+        return
+
+    def formatted_print(self, columns):
+        row = ""
+        for i in columns:
+            x = i
+            if type(x) is not str:
+                x = str(x)
+            row += '{:<15}'.format(x)
+        print(row)
+
+
+    def show_groups(self):
+        self.person_id = -1
+        menu = """Просмотр списка групп!\n"""
+        columns = ["№", "Группа", "Специальность", "Кафедра"]
+        self.formatted_print(columns)
+        lst = GroupsTable().all()
+        for i in range(len(lst)):
+            a = list(lst[i])
+            a.insert(0, i)
+            self.formatted_print(a)
+        return
+
+    def group_actions(self):
+        current_step = "-1"
+        while True:
+            if current_step == "-1":
+                self.show_groups()
+                self.show_group_menu()
+                current_step = self.read_next_step()
+            elif current_step == "3":
+                # Добавление группы
+                print("Не реализовано! ")
+                current_step = "-1"
+                # current_step = self.show_add_person()
+            elif current_step == "4":
+                # Изменение группы
+                print("Не реализовано! ")
+                current_step = "-1"
+            elif current_step == "5":
+                # Удаление группы
+                print("Не реализовано! ")
+                current_step = "-1"
+            elif current_step == "6":
+                print("Не реализовано! ")
+                current_step = "-1"
+            elif current_step == "7":
+                print("Не реализовано! ")
+                current_step = "-1"
+            elif current_step == "8":
+                print("Не реализовано! ")
+                current_step = "-1"
+            elif current_step == "0":
+                return "0"
+            elif current_step == "9":
+                return "9"
+            else:
+                print("Выбрано неверное значение! Повторите ввод!")
+                current_step = self.read_next_step()
+
     def main_cycle(self):
         current_menu = "0"
         while current_menu != "9":
@@ -343,8 +417,7 @@ class Main:
             elif current_menu == "1":
                 current_menu = self.people_actions()
             elif current_menu == "2":
-                print("Не реализовано! ")
-                current_menu = "0"
+                current_menu = self.group_actions()
             elif current_menu == "3":
                 # testing
                 current_menu = self.find_people_by_lastname()
@@ -361,33 +434,6 @@ m = Main()
 m.main_cycle()
 
 
-
-#     def show_groups(self):
-#         menu = """Просмотр списка групп!\nГруппа\tСпециальность\tКафедра"""
-#         print(menu)
-#         lst = GroupsTable().all()
-#         print(lst)
-#     #     lst = PeopleTable().all()
-#     #     for i in lst:
-#     #         # 0 - имя
-#     #         # 1 - id
-#     #         # 2 - Фамилия
-#     #         # 3 - Отчество
-#     #         print(str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]))
-#     #     menu = """Дальнейшие операции:
-#     # 0 - возврат в главное меню;
-#     # 3 - добавление нового человека;
-#     # 4 - удаление человека;
-#     # 5 - просмотр телефонов человека;
-#     # 6 - ВВОДИМ НОМЕР и потом смотрим номера человека, но у него нет этого номера(?);
-#     # 7 - вводим номер телефона, потом новый номер, потом номер человека, потом этого номера нет ???
-#     # 8 - требует ввести позицию телефона, потом позицию человека и выводит всю инфу о человеке ???
-#     # 9 - выход."""
-#     #     print(menu)
-#     #     return
-#
-#
-#
 
 
 

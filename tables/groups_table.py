@@ -24,5 +24,13 @@ class GroupsTable(DbTable):
         cur.execute(sql, {"offset": num - 1})
         return cur.fetchone()
 
+    def all(self):
+        sql = "SELECT group_name, speciality, department FROM " + self.table_name()
+        sql += " ORDER BY "
+        sql += ", ".join(self.primary_key())
+        cur = self.dbconn.conn.cursor()
+        cur.execute(sql)
+        return cur.fetchall()
+
 
 

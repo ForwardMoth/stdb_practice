@@ -25,3 +25,11 @@ class PeopleTable(DbTable):
         cur = self.dbconn.conn.cursor()
         cur.execute(sql, {"lastname": l_name})
         return cur.fetchone()
+
+    def all(self):
+        sql = "SELECT id, last_name, first_name, second_name FROM " + self.table_name()
+        sql += " ORDER BY "
+        sql += ", ".join(self.primary_key())
+        cur = self.dbconn.conn.cursor()
+        cur.execute(sql)
+        return cur.fetchall()

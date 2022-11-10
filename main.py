@@ -13,6 +13,7 @@ class Main:
     connection = DbConnection(config)
 
     def __init__(self):
+        self.group_obj = None
         self.person_id = None
         self.person_obj = None
         self.phone_id = None
@@ -143,7 +144,7 @@ class Main:
             else:
                 return second_name
     # Добавление человека
-    def show_add_person(self):
+    def add_person(self):
         data = [self.form_last_name(), self.form_first_name(), self.form_second_name()]
         # Проверяем элементы на пустоту (в случае отмены ввода)
         for i in data:
@@ -183,7 +184,7 @@ class Main:
                 columns = ["№", "Телефон"]
                 self.formatted_print(columns)
                 for i in range(len(lst)):
-                    a = [i, lst[i][1]]
+                    a = [i+1, lst[i][1]]
                     self.formatted_print(a)
         return
 
@@ -214,7 +215,7 @@ class Main:
             if len(num.strip()) == 0:
                 print("Пустая строка. Повторите ввод! ")
             if num == "0":
-                return "1"
+                return "-1"
             if not num.strip().isnumeric():
                 print("Неверные данные. Повторите ввод! ")
 
@@ -229,7 +230,8 @@ class Main:
     # Новая функция для редактирования номера телефона
     def edit_phone(self):
         phone = self.phone_form()
-        PhonesTable().update(phone, self.phone_obj[1])
+        if phone is not None:
+            PhonesTable().update(phone, self.phone_obj[1])
         return "-1"
 
     # Новая функция для удаления номера телефона
@@ -241,15 +243,59 @@ class Main:
         menu = """Дальнейшие операции:
         0 - возврат в главное меню;
         1 - возврат в просмотр людей;
-        3 - ? СОЗДАНИЕ ЧЕЛОВЕКА ?
+        3 - ? СОЗДАНИЕ ЧЕЛОВЕКА ? 
         4 - не реализовано
         5 - ? ПРОСМОТР СПИСКА ТЕЛЕФОНОВ ?
-        6 - добавление нового телефона (для выбранного человека);
-        7 - редактирование номера телефона;
-        8 - удаление телефона;
+        6 - добавление нового телефона (для выбранного человека); 
+        7 - редактирование номера телефона; 
+        8 - удаление телефона; 
         9 - выход."""
         print(menu)
         return
+
+    def form_group_name(self):
+        while True:
+            group_name = input("Введите номер группы (1 - отмена): ").strip()
+            if group_name == "1":
+                return
+            if len(group_name.strip()) == 0:
+                print("Номер группы не может быть пустым!")
+            elif len(group_name.strip()) > 7:
+                print("Номер группы имеет недопустимую длину!")
+            else:
+                return group_name
+
+    def form_speciality(self):
+        while True:
+            speciality = input("Введите специальность (1 - отмена): ").strip()
+            if speciality == "1":
+                return
+            if len(speciality.strip()) == 0:
+                print("Специальность не может быть пустой!")
+            elif len(speciality.strip()) > 128:
+                print("Специальность имеет недопустимую длину!")
+            else:
+                return speciality
+
+    def form_department(self):
+        while True:
+            second_name = input("Введите кафедру (1 - отмена): ").strip()
+            if second_name == "1":
+                return
+            if len(second_name.strip()) == 0:
+                print("Отчество не может быть пустым!")
+            elif len(second_name.strip()) > 3:
+                print("Отчество имеет недопустимую длину!")
+            else:
+                return second_name
+
+    def add_group(self):
+        data = [self.form_group_name(), self.form_speciality(), self.form_department()]
+        for i in data:
+            if i is None:
+                return "-1"
+        GroupsTable().insert_one(data)
+        return "-1"
 
     def phone_actions(self):
         code = "-1"
@@ -264,6 +310,7 @@ class Main:
                     self.show_phones_menu()
                     current_step = self.read_next_step()
                 elif current_step == "3":
+                    # current_step = self.add
                     print("Не реализовано! ")
                     current_step = "-1"
                 elif current_step == "4":
@@ -274,12 +321,15 @@ class Main:
                     current_step = "-1"
                 elif current_step == "6":
                     current_step = self.add_phone()
-                elif current_step == "7":
-                    self.find_phone_by_id()
-                    current_step = self.edit_phone()
-                elif current_step == "8":
-                    self.find_phone_by_id()
-                    current_step = self.delete_phone()
+                elif current_step in ["7", "8"]:
+                    step = self.find_phone_by_id()
+                    if step is None:
+                        if current_step == "7":
+                            current_step = self.edit_phone()
+                        else:
+                            current_step = self.delete_phone()
+                    else:
+                        current_step = step
                 elif current_step == "1":
                     return "-1"
                 elif current_step == "0":
@@ -313,7 +363,7 @@ class Main:
                 self.show_people_menu()
                 current_step = self.read_next_step()
             elif current_step == "3":
-                current_step = self.show_add_person()
+                current_step = self.add_person()
             elif current_step == "4":
                 print("Не реализовано! ")
                 current_step = "-1"
@@ -340,11 +390,10 @@ class Main:
         menu = """Дальнейшие операции:
         0 - Возврат в главное меню;
         3 - Добавление новой группы;
-        4 - Изменение информации о группе;
-        5 - Изменение номера группы; 
-        6 - Удаление группы;
-        7 - Добавление человека в группу
-        8 - Не реализовано
+        4 - Изменение номера группы
+        5 - Изменение специальности группы;
+        6 - Изменение кафедры; 
+        7 - Удаление группы;
         9 - Выход."""
         print(menu)
         return
@@ -366,10 +415,55 @@ class Main:
         self.formatted_print(columns)
         lst = GroupsTable().all()
         for i in range(len(lst)):
-            a = list(lst[i])
-            a.insert(0, i)
+            a = list(lst[i])[::-1]
+            a.insert(0, i+1)
             self.formatted_print(a)
         return
+
+    def find_group_by_id(self):
+        num = -1
+        while True:
+            num = input("Укажите номер строки, в которой записан интересующий Вас номер группы (0 - отмена): ")
+            if len(num.strip()) == 0:
+                print("Пустая строка. Повторите ввод! ")
+            if num == "0":
+                return "1"
+            if not num.strip().isnumeric():
+                print("Неверные данные. Повторите ввод! ")
+
+            group = GroupsTable().find_by_position(int(num))
+            if not group:
+                print("Введено число, неудовлетворяющее количеству телефонов!")
+            else:
+                self.group_obj = group
+                break
+
+    def edit_group(self, step):
+        if self.find_group_by_id() is None:
+            values_for_edit = []
+            if step == "4":
+                group_name = self.form_group_name()
+                if group_name is None:
+                    return "-1"
+                values_for_edit = [group_name, self.group_obj[0], "group_name"]
+            elif step == "5":
+                speciality = self.form_speciality()
+                if speciality is None:
+                    return "-1"
+                values_for_edit = [speciality, self.group_obj[0], "speciality"]
+            else:
+                department = self.form_department()
+                if department is None:
+                    return "-1"
+                values_for_edit = [department, self.group_obj[0], "department"]
+            if len(values_for_edit) == 3:
+                GroupsTable().update(values_for_edit)
+        return "-1"
+
+    def delete_group(self):
+        if self.find_group_by_id() is None:
+            GroupsTable().delete(self.group_obj[0])
+        return "-1"
 
     def group_actions(self):
         current_step = "-1"
@@ -379,24 +473,11 @@ class Main:
                 self.show_group_menu()
                 current_step = self.read_next_step()
             elif current_step == "3":
-                # Добавление группы
-                print("Не реализовано! ")
-                current_step = "-1"
-                # current_step = self.show_add_person()
-            elif current_step == "4":
-                # Изменение группы
-                print("Не реализовано! ")
-                current_step = "-1"
-            elif current_step == "5":
-                # Удаление группы
-                print("Не реализовано! ")
-                current_step = "-1"
-            elif current_step == "6":
-                print("Не реализовано! ")
-                current_step = "-1"
+                current_step = self.add_group()
+            elif current_step in ["4", "5", "6"]:
+                current_step = self.edit_group(current_step)
             elif current_step == "7":
-                print("Не реализовано! ")
-                current_step = "-1"
+                current_step = self.delete_group()
             elif current_step == "8":
                 print("Не реализовано! ")
                 current_step = "-1"
@@ -432,9 +513,3 @@ class Main:
 
 m = Main()
 m.main_cycle()
-
-
-
-
-
-

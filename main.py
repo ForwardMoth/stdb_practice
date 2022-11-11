@@ -59,7 +59,7 @@ class Main:
         if next_step == "2":
             self.db_drop()
             self.db_init()
-            self.db_insert_somethings()
+            self.db_insert_somethings() #заполняет после сброса и инициализации тестовыми значениями
             print("Таблицы созданы заново!")
             return "0"
         elif next_step != "1" and next_step != "9":
@@ -75,7 +75,8 @@ class Main:
         print(menu)
         lst = PeopleTable().all()
         for i in lst:
-            print(str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[0]) + "\t" + str(i[3]))
+            print(i)
+            # print(str(i[0]) + "\t" + str(i[1]) + "\t" + str(i[2]) + "\t" + str(i[3]))
         menu = """Дальнейшие операции: 
     0 - возврат в главное меню;
     3 - добавление нового человека;
@@ -257,7 +258,7 @@ class Main:
         current_menu = "0"
         next_step = None
         while current_menu != "9":
-            if current_menu == "0":
+            if current_menu == "0": #всегда выполняется пока не выход (9)
                 self.show_main_menu()
                 next_step = self.read_next_step()
                 current_menu = self.after_main_menu(next_step)

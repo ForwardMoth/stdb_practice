@@ -33,3 +33,20 @@ class PeopleTable(DbTable):
         cur = self.dbconn.conn.cursor()
         cur.execute(sql)
         return cur.fetchall()
+
+    def update(self, a):
+        sql = "UPDATE " + self.table_name()
+        sql += f" SET {a[2]} = :new_value"
+        sql += f" WHERE id = :person_id"
+        cur = self.dbconn.conn.cursor()
+        cur.execute(sql, {"new_value": a[0], "person_id": a[1]})
+        self.dbconn.conn.commit()
+        return
+
+    def delete(self, person_id):
+        sql = "DELETE FROM " + self.table_name()
+        sql += " WHERE id = :person_id"
+        cur = self.dbconn.conn.cursor()
+        cur.execute(sql, {"person_id": person_id})
+        self.dbconn.conn.commit()
+        return

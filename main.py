@@ -103,8 +103,10 @@ class Main:
         columns = ["№", "Фамилия", "Имя", "Отчество"]
         self.formatted_print(columns)
         lst = PeopleTable().all()
-        for i in lst:
-            self.formatted_print(list(i))
+        for i in range(len(lst)):
+            a = list(lst[i])[1:]
+            a.insert(0, i+1)
+            self.formatted_print(a)
         return
 
     # Форма ввода имени
@@ -145,7 +147,16 @@ class Main:
                 return second_name
     # Добавление человека
     def add_person(self):
-        data = [self.form_last_name(), self.form_first_name(), self.form_second_name()]
+        last_name = self.form_last_name()
+        if last_name is None:
+            return "-1"
+        first_name = self.form_first_name()
+        if first_name is None:
+            return "-1"
+        second_name = self.form_second_name()
+        if second_name is None:
+            return "-1"
+        data = [last_name, first_name, second_name]
         # Проверяем элементы на пустоту (в случае отмены ввода)
         for i in data:
             if i is None:
@@ -243,9 +254,6 @@ class Main:
         menu = """Дальнейшие операции:
         0 - возврат в главное меню;
         1 - возврат в просмотр людей;
-        3 - ? СОЗДАНИЕ ЧЕЛОВЕКА ? 
-        4 - не реализовано
-        5 - ? ПРОСМОТР СПИСКА ТЕЛЕФОНОВ ?
         6 - добавление нового телефона (для выбранного человека); 
         7 - редактирование номера телефона; 
         8 - удаление телефона; 
@@ -342,15 +350,62 @@ class Main:
 
         return "-1"
 
+    def show_edit_person_menu(self):
+        menu = """Дальнейшие операции:
+        0 - Отмена;
+        1 - Изменение фамилии;
+        2 - Изменение имени;
+        3 - Изменение отчества;
+        """
+        print(menu)
+        return
+
+    def edit_person(self):
+        if self.find_phone_by_person() == "0":
+            values_for_edit = []
+            step = "-1"
+            while True:
+                if step == "-1":
+                    self.show_edit_person_menu()
+                    step = self.read_next_step()
+                elif step in ["1", "2", "3"]:
+                    break
+                elif step == "0":
+                    return "-1"
+                else:
+                    print("Выбрано неверное значение! Повторите ввод!")
+
+            if step == "1":
+                last_name = self.form_last_name()
+                if last_name is None:
+                    return "-1"
+                values_for_edit = [last_name, self.person_id, "last_name"]
+            elif step == "2":
+                first_name = self.form_first_name()
+                if first_name is None:
+                    return "-1"
+                values_for_edit = [first_name, self.person_id, "first_name"]
+            else:
+                second_name = self.form_second_name()
+                if second_name is None:
+                    return "-1"
+                values_for_edit = [second_name, self.person_id, "second_name"]
+            if len(values_for_edit) == 3:
+                PeopleTable().update(values_for_edit)
+        return "-1"
+
+    def delete_person(self):
+        if self.find_phone_by_person() == "0":
+            PeopleTable().delete(self.person_id)
+        return "-1"
+
     def show_people_menu(self):
         menu = """Дальнейшие операции:
     0 - возврат в главное меню;
     3 - добавление нового человека;
     4 - удаление человека;
     5 - просмотр телефонов человека;
-    6 - ВВОДИМ НОМЕР и потом смотрим номера человека, но у него нет этого номера(?);
-    7 - вводим номер телефона, потом новый номер, потом номер человека, потом этого номера нет ???
-    8 - требует ввести позицию телефона, потом позицию человека и выводит всю инфу о человеке ???
+    6 - Редактирование информации о человеке
     9 - выход."""
         print(menu)
         return
@@ -365,13 +420,11 @@ class Main:
             elif current_step == "3":
                 current_step = self.add_person()
             elif current_step == "4":
-                print("Не реализовано! ")
-                current_step = "-1"
+                current_step = self.delete_person()
             elif current_step == "5":
                 current_step = self.phone_actions()
             elif current_step == "6":
-                print("Не реализовано! ")
-                current_step = "-1"
+                current_step = self.edit_person()
             elif current_step == "7":
                 print("Не реализовано! ")
                 current_step = "-1"
@@ -500,7 +553,6 @@ class Main:
             elif current_menu == "2":
                 current_menu = self.group_actions()
             elif current_menu == "3":
-                # testing
                 current_menu = self.find_people_by_lastname()
             elif current_menu == "8":
                 current_menu = self.db_drop_init()

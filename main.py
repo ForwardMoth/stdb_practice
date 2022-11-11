@@ -34,9 +34,9 @@ class Main:
         pt = PeopleTable()
         pht = PhonesTable()
         gt = GroupsTable()
-        pt.insert_one(["Test", "Test", "Test"])
-        pt.insert_one(["Test2", "Test2", "Test2"])
-        pt.insert_one(["Test3", "Test3", "Test3"])
+        pt.insert_one(["Test", "Test", "Test", "NULL"])
+        pt.insert_one(["Test2", "Test2", "Test2", "NULL"])
+        pt.insert_one(["Test3", "Test3", "Test3", "NULL"])
         pht.insert_one([1, "123"])
         pht.insert_one([2, "123"])
         pht.insert_one([3, "123"])
@@ -100,7 +100,7 @@ class Main:
         self.person_id = -1
         menu = """Просмотр списка людей!"""
         print(menu)
-        columns = ["№", "Фамилия", "Имя", "Отчество"]
+        columns = ["№", "Фамилия", "Имя", "Отчество", "Группа"]
         self.formatted_print(columns)
         lst = PeopleTable().all()
         for i in range(len(lst)):
@@ -156,7 +156,7 @@ class Main:
         second_name = self.form_second_name()
         if second_name is None:
             return "-1"
-        data = [last_name, first_name, second_name]
+        data = [last_name, first_name, second_name, "NULL"]
         # Проверяем элементы на пустоту (в случае отмены ввода)
         for i in data:
             if i is None:
@@ -178,7 +178,7 @@ class Main:
             if not person:
                 print("Введено число, неудовлетворяющее количеству людей!")
             else:
-                self.person_id = int(person[1])
+                self.person_id = int(person[2])
                 self.person_obj = person
                 return "0"
 
@@ -214,7 +214,10 @@ class Main:
 
     # Новая функция для добавление телефонов
     def add_phone(self):
-        data = [self.person_id, self.phone_form()]
+        phone = self.phone_form()
+        if phone is None:
+            return "-1"
+        data = [self.person_id, phone]
         PhonesTable().insert_one(data)
         return "-1"
 
@@ -298,7 +301,16 @@ class Main:
                 return second_name
 
     def add_group(self):
-        data = [self.form_group_name(), self.form_speciality(), self.form_department()]
+        group_name = self.form_group_name()
+        if group_name is None:
+            return "-1"
+        speciality = self.form_speciality()
+        if speciality is None:
+            return "-1"
+        department = self.form_department()
+        if department is None:
+            return "-1"
+        data = [group_name, speciality, department]
         for i in data:
             if i is None:
                 return "-1"
@@ -399,13 +411,21 @@ class Main:
             PeopleTable().delete(self.person_id)
         return "-1"
 
+    def add_person_in_group(self):
+        if self.find_phone_by_person() == "0":
+            self.show_groups()
+            if self.find_group_by_id() is None:
+                PeopleTable().update([self.person_id, self.group_obj[0], "group_name"])
+        return "-1"
+
     def show_people_menu(self):
         menu = """Дальнейшие операции:
     0 - возврат в главное меню;
     3 - добавление нового человека;
     4 - удаление человека;
     5 - просмотр телефонов человека;
-    6 - Редактирование информации о человеке
+    6 - Редактирование информации о человеке;
+    7 - Добавление человека в группу;
     9 - выход."""
         print(menu)
         return
@@ -426,8 +446,7 @@ class Main:
             elif current_step == "6":
                 current_step = self.edit_person()
             elif current_step == "7":
-                print("Не реализовано! ")
-                current_step = "-1"
+                current_step = self.add_person_in_group()
             elif current_step == "8":
                 print("Не реализовано! ")
                 current_step = "-1"
@@ -462,7 +481,6 @@ class Main:
 
 
     def show_groups(self):
-        self.person_id = -1
         menu = """Просмотр списка групп!\n"""
         columns = ["№", "Группа", "Специальность", "Кафедра"]
         self.formatted_print(columns)

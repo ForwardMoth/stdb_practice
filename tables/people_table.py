@@ -1,5 +1,6 @@
 from dbtable import *
 
+
 class PeopleTable(DbTable):
     def table_name(self):
         return self.dbconn.prefix + "people"
@@ -8,7 +9,8 @@ class PeopleTable(DbTable):
         return {"id": ["integer", "PRIMARY KEY", "AUTOINCREMENT"],
                 "last_name": ["varchar(32)", "NOT NULL"],
                 "first_name": ["varchar(32)", "NOT NULL"],
-                "second_name": ["varchar(32)"]}
+                "second_name": ["varchar(32)"],
+                "group_name": ["varchar(7)"]}
 
     def find_by_position(self, num):
         sql = "SELECT * FROM " + self.table_name()
@@ -17,7 +19,7 @@ class PeopleTable(DbTable):
         sql += " LIMIT 1 OFFSET :offset"
         cur = self.dbconn.conn.cursor()
         cur.execute(sql, {"offset": num - 1})
-        return cur.fetchone()       
+        return cur.fetchone()
 
     def find_by_last_name(self, l_name):
         sql = "SELECT * FROM " + self.table_name()
@@ -27,7 +29,7 @@ class PeopleTable(DbTable):
         return cur.fetchone()
 
     def all(self):
-        sql = "SELECT id, last_name, first_name, second_name FROM " + self.table_name()
+        sql = "SELECT id, last_name, first_name, second_name, group_name FROM " + self.table_name()
         sql += " ORDER BY "
         sql += ", ".join(self.primary_key())
         cur = self.dbconn.conn.cursor()
@@ -39,7 +41,7 @@ class PeopleTable(DbTable):
         sql += f" SET {a[2]} = :new_value"
         sql += f" WHERE id = :person_id"
         cur = self.dbconn.conn.cursor()
-        cur.execute(sql, {"new_value": a[0], "person_id": a[1]})
+        cur.execute(sql, {"person_id": a[0], "new_value": a[1]})
         self.dbconn.conn.commit()
         return
 

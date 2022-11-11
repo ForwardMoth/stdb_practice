@@ -70,7 +70,7 @@ class Main:
             if lastname is not None:
                 self.person_id = lastname[0]
                 self.person_obj = lastname
-                print("Найдена запись: " + self.person_obj[2] + " " + self.person_obj[0] + " " + self.person_obj[3])
+                print("Выбран человек: " + self.person_obj[3] + " " + self.person_obj[0] + " " + self.person_obj[4])
                 return "0"
             else:
                 print("Запись не найдена! Повторите ввод! ")
@@ -184,7 +184,7 @@ class Main:
 
     def show_phones_by_people(self):
         if self.person_id != -1:
-            print("Выбран человек: " + self.person_obj[2] + " " + self.person_obj[0] + " " + self.person_obj[3])
+            print("Выбран человек: " + self.person_obj[3] + " " + self.person_obj[0] + " " + self.person_obj[4])
             lst = PhonesTable().all_by_person_id(self.person_id)
             # Проверяем есть ли в таблице номера телефонов для человека
             if len(lst) == 0:
@@ -415,7 +415,7 @@ class Main:
         if self.find_phone_by_person() == "0":
             self.show_groups()
             if self.find_group_by_id() is None:
-                PeopleTable().update([self.person_id, self.group_obj[0], "group_name"])
+                PeopleTable().update([self.group_obj[0], self.person_id, "group_name"])
         return "-1"
 
     def show_people_menu(self):
@@ -486,7 +486,7 @@ class Main:
         self.formatted_print(columns)
         lst = GroupsTable().all()
         for i in range(len(lst)):
-            a = list(lst[i])[::-1]
+            a = list(lst[i])
             a.insert(0, i+1)
             self.formatted_print(a)
         return

@@ -41,7 +41,7 @@ class PeopleTable(DbTable):
         sql += f" SET {a[2]} = :new_value"
         sql += f" WHERE id = :person_id"
         cur = self.dbconn.conn.cursor()
-        cur.execute(sql, {"person_id": a[0], "new_value": a[1]})
+        cur.execute(sql, {"new_value": a[0], "person_id": a[1]})
         self.dbconn.conn.commit()
         return
 

@@ -26,7 +26,7 @@ class DbTable:
 
     def table_constraints(self):
         return []
-
+    #1212
     def create(self):
         sql = "CREATE TABLE " + self.table_name() + "("
         arr = [k + " " + " ".join(v) for k, v in sorted(self.columns().items(), key = lambda x: x[0])]
@@ -43,18 +43,22 @@ class DbTable:
         cur.execute(sql)
         self.dbconn.conn.commit()
         return
-
+    # поправить
     def insert_one(self, vals):
-        for i in range(0, len(vals)):
-            if type(vals[i]) == str:
-                vals[i] = "'" + vals[i] + "'"
-            else:
-                vals[i] = str(vals[i])
         sql = "INSERT INTO " + self.table_name() + "("
         sql += ", ".join(self.column_names_without_id()) + ") VALUES("
-        sql += ", ".join(vals) + ")"
+        keys = self.column_names_without_id()
+        # name = "VALUES(:last_name, :first_name, :second_name, :group_name)"
+        dict = {}
+        for_sql = ""
+        for i in range(len(keys)):
+            dict[keys[i]] = vals[i]
+            for_sql += ":" + keys[i]
+            if i < len(keys) - 1:
+                for_sql += ", "
+        sql += for_sql + ")"
         cur = self.dbconn.conn.cursor()
-        cur.execute(sql)
+        cur.execute(sql, dict)
         self.dbconn.conn.commit()
         return
 

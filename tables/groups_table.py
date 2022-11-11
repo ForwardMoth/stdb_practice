@@ -40,3 +40,11 @@ class GroupsTable(DbTable):
         cur.execute(sql, {"group_name": group_name})
         self.dbconn.conn.commit()
         return
+
+    def all(self):
+        sql = "SELECT group_name, speciality, department FROM " + self.table_name()
+        sql += " ORDER BY "
+        sql += ", ".join(self.primary_key())
+        cur = self.dbconn.conn.cursor()
+        cur.execute(sql)
+        return cur.fetchall()

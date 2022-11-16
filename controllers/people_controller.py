@@ -13,17 +13,33 @@ class PeopleController:
         self.person_id = None
         self.person_obj = None
 
+    def find_people_by_lastname(self):
+        while True:
+            last_name = input("Укажите фамилию человека, которого надо найти: (0 - отмена) ")
+            if len(last_name.strip()) == 0:
+                print("Пустая строка. Повторите ввод! ")
+            if len(last_name.strip()) > 32:
+                print("Слишком длинная фамилия. Повторите ввод! ")
+            if last_name == "0":
+                return "0"
+            person = PeopleTable().find_by_last_name(last_name)
+            if person is not None:
+                print("Выбран человек: " + person[3] + " " + person[0] + " " + person[4])
+                return "0"
+            else:
+                print("Запись не найдена! Повторите ввод! ")
+
     def show_people(self):
         self.person_id = -1
         menu = """Просмотр списка людей!"""
         print(menu)
         columns = ["№", "Фамилия", "Имя", "Отчество", "Группа"]
-        ReadWriter(columns).formatted_print()
+        ReadWriter().formatted_print(columns)
         lst = PeopleTable().all()
         for i in range(len(lst)):
             a = list(lst[i])[1:]
             a.insert(0, i + 1)
-            ReadWriter(a).formatted_print()
+            ReadWriter().formatted_print(a)
         return
 
     # Добавление человека

@@ -1,10 +1,7 @@
 class ReadWriter:
-    def __init__(self, columns=None):
-        self.columns = columns
-
-    def formatted_print(self):
+    def formatted_print(self, columns):
         row = ""
-        for i in self.columns:
+        for i in columns:
             x = i
             if type(x) is not str:
                 x = str(x)

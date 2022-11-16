@@ -22,10 +22,10 @@ class PhonesController:
                 phone_show_text = """Просмотр списка телефонов!"""
                 print(phone_show_text)
                 columns = ["№", "Телефон"]
-                ReadWriter(columns).formatted_print()
+                ReadWriter().formatted_print(columns)
                 for i in range(len(lst)):
                     a = [i + 1, lst[i][1]]
-                    ReadWriter(a).formatted_print()
+                    ReadWriter().formatted_print(a)
         return
 
     # Новая функция для добавление телефонов

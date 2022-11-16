@@ -2,22 +2,6 @@ from tables.people_table import *
 
 
 class PeopleHelper:
-    def find_people_by_lastname(self):
-        while True:
-            last_name = input("Укажите фамилию человека, которого надо найти: (0 - отмена) ")
-            if len(last_name.strip()) == 0:
-                print("Пустая строка. Повторите ввод! ")
-            if len(last_name.strip()) > 32:
-                print("Слишком длинная фамилия. Повторите ввод! ")
-            if last_name == "0":
-                return "0"
-            person = PeopleTable().find_by_last_name(last_name)
-            if person is not None:
-                print("Выбран человек: " + person[3] + " " + person[0] + " " + person[4])
-                return "0"
-            else:
-                print("Запись не найдена! Повторите ввод! ")
-
     def show_edit_person_menu(self):
         menu = """Дальнейшие операции:
            0 - Отмена;

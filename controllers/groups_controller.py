@@ -35,12 +35,12 @@ class GroupsController:
     def show_groups(self):
         menu = """Просмотр списка групп!\n"""
         columns = ["№", "Группа", "Специальность", "Кафедра"]
-        ReadWriter(columns).formatted_print()
+        ReadWriter().formatted_print(columns)
         lst = GroupsTable().all()
         for i in range(len(lst)):
             a = list(lst[i])
             a.insert(0, i + 1)
-            ReadWriter(a).formatted_print()
+            ReadWriter().formatted_print(a)
         return
 
     def add_group(self):

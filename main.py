@@ -4,7 +4,6 @@ sys.path.append('tables')
 
 from project_config import *
 from controllers.people_controller import *
-from helpers.peopleHelper import *
 
 
 class Main:
@@ -78,7 +77,7 @@ class Main:
             elif current_menu == "2":
                 current_menu = GroupsController().group_actions()
             elif current_menu == "3":
-                current_menu = PeopleHelper().find_people_by_lastname()
+                current_menu = PeopleController().find_people_by_lastname()
             elif current_menu == "8":
                 current_menu = self.db_drop_init()
             else:

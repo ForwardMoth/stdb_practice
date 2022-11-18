@@ -4,50 +4,49 @@ sys.path.append('tables')
 
 from project_config import *
 from controllers.people_controller import *
+from tables.people_table import *
 
-# 12321
 
 class Main:
     config = ProjectConfig()
     connection = DbConnection(config)
 
     def __init__(self):
-        self.group_obj = None
-        self.person_id = None
         DbTable.dbconn = self.connection
-        return
 
     def db_init(self):
-        peopleTable = PeopleTable()
-        phonesTable = PhonesTable()
-        peopleTable.create()
-        phonesTable.create()
-        groupsTable = GroupsTable()
-        groupsTable.create()
-        return
-
-    def db_insert_somethings(self):
-        pt = PeopleTable()
-        pht = PhonesTable()
-        gt = GroupsTable()
-        pt.insert_one(["Test", "Test", "Test", "NULL"])
-        pt.insert_one(["Test2", "Test2", "Test2", "NULL"])
-        pt.insert_one(["Test3", "Test3", "Test3", "NULL"])
-        pht.insert_one([1, "123"])
-        pht.insert_one([2, "123"])
-        pht.insert_one([3, "123"])
-        gt.insert_one(["C19-702", "ИАСБ", "75"])
-        gt.insert_one(["C19-712", "ИАСБ", "75"])
-        gt.insert_one(["C19-711", "ЭКБЕЗ", "75"])
+        self.connection.set_metadata()
+        PeopleTable().create()
+        GroupsTable().create()
+        PhonesTable().create()
+        PeopleGroupsTable().create()
+        self.connection.metadata.create_all(self.connection.engine)
 
     def db_drop(self):
-        pht = PhonesTable()
-        pt = PeopleTable()
-        gt = GroupsTable()
-        pht.drop()
-        gt.drop()
-        pt.drop()
-        return
+        PhonesTable().drop()
+        PeopleGroupsTable().drop()
+        PeopleTable().drop()
+        GroupsTable().drop()
+        self.connection.metadata.drop_all(self.connection.engine)
+
+    def db_insert_somethings(self):
+        people = PeopleTable()
+        groups = GroupsTable()
+        phones = PhonesTable()
+        people_groups = PeopleGroupsTable()
+
+        people.insert_one(["Test", "Test", "Test"])
+        people.insert_one(["Test2", "Test2", "Test2"])
+        people.insert_one(["Test3", "Test3", "Test3"])
+        phones.insert_one([1, "123"])
+        phones.insert_one([2, "123"])
+        phones.insert_one([3, "123"])
+        groups.insert_one(["C19-702", "ИАСБ", "75"])
+        groups.insert_one(["C19-712", "ИАСБ", "75"])
+        groups.insert_one(["C19-711", "ЭКБЕЗ", "75"])
+        people_groups.insert_one([1, 1])
+        people_groups.insert_one([1, 2])
+        people_groups.insert_one([2, 2])
 
     def show_main_menu(self):
         menu = """Добро пожаловать!
@@ -90,3 +89,6 @@ class Main:
 
 m = Main()
 m.main_cycle()
+
+
+

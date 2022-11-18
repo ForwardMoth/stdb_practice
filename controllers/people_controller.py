@@ -2,6 +2,7 @@ from tables.people_table import *
 from helpers.readWriterHelper import *
 from controllers.phones_controller import *
 from controllers.groups_controller import *
+from controllers.people_groups_controller import *
 from helpers.peopleHelper import *
 
 

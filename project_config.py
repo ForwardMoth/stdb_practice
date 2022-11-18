@@ -8,6 +8,9 @@ class ProjectConfig:
             config = yaml.safe_load(f)
             self.dbfilepath = config['dbfilepath']
             self.dbtableprefix = config['dbtableprefix']
+            self.user = config['user']
+            self.password = config['password']
+            self.db_name = config['db_name']
 
 if __name__ == "__main__":
     x = ProjectConfig()

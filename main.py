@@ -1,52 +1,64 @@
-import sys
-
-sys.path.append('tables')
-
-from project_config import *
 from controllers.people_controller import *
-from tables.people_table import *
 
 
 class Main:
-    config = ProjectConfig()
-    connection = DbConnection(config)
-
     def __init__(self):
-        DbTable.dbconn = self.connection
+        self.db = DataBase()
 
     def db_init(self):
-        self.connection.set_metadata()
-        PeopleTable().create()
-        GroupsTable().create()
-        PhonesTable().create()
-        PeopleGroupsTable().create()
-        self.connection.metadata.create_all(self.connection.engine)
-
-    def db_drop(self):
-        PhonesTable().drop()
-        PeopleGroupsTable().drop()
-        PeopleTable().drop()
-        GroupsTable().drop()
-        self.connection.metadata.drop_all(self.connection.engine)
-
-    def db_insert_somethings(self):
         people = PeopleTable()
         groups = GroupsTable()
         phones = PhonesTable()
         people_groups = PeopleGroupsTable()
+        self.db.Base.metadata.create_all(self.db.engine)
 
-        people.insert_one(["Test", "Test", "Test"])
-        people.insert_one(["Test2", "Test2", "Test2"])
-        people.insert_one(["Test3", "Test3", "Test3"])
-        phones.insert_one([1, "123"])
-        phones.insert_one([2, "123"])
-        phones.insert_one([3, "123"])
-        groups.insert_one(["C19-702", "ИАСБ", "75"])
-        groups.insert_one(["C19-712", "ИАСБ", "75"])
-        groups.insert_one(["C19-711", "ЭКБЕЗ", "75"])
-        people_groups.insert_one([1, 1])
-        people_groups.insert_one([1, 2])
-        people_groups.insert_one([2, 2])
+    def db_drop(self):
+        self.db.Base.metadata.drop_all(self.db.engine)
+
+    def db_insert_somethings(self):
+        data_people = {
+            "1": {"last_name": "Иванов", "first_name": "Иван", "second_name": "Иванович"},
+            "2": {"last_name": "Петров", "first_name": "Александр", "second_name": "Петрович"},
+            "3": {"last_name": "Сидоров", "first_name": "Василий", "second_name": "Игоревич"}
+        }
+
+        for key in data_people:
+            person = PeopleTable()
+            person.set_attributes(data_people[key])
+            self.db.add(person)
+
+        data_groups = {
+            "1": {"group_name": "C19-702", "speciality": "ИАСБ", "department": "75"},
+            "2": {"group_name": "C19-712", "speciality": "ИАСБ", "department": "75"},
+            "3": {"group_name": "C19-711", "speciality": "ЭКБЕЗ", "department": "75"}
+        }
+
+        for key in data_groups:
+            group = GroupsTable()
+            group.set_attributes(data_groups[key])
+            self.db.add(group)
+
+        data_phones = {
+            "1": {"person_id": 1, "phone": "123"},
+            "2": {"person_id": 2, "phone": "12421"},
+            "3": {"person_id": 3, "phone": "5474"}
+        }
+
+        for key in data_phones:
+            phone = PhonesTable()
+            phone.set_attributes(data_phones[key])
+            self.db.add(phone)
+
+        data_people_groups = {
+            "1": {"person_id": 1, "group_id": 1},
+            "2": {"person_id": 1, "group_id": 2},
+            "3": {"person_id": 2, "group_id": 2}
+        }
+
+        for key in data_people_groups:
+            person_group = PeopleGroupsTable()
+            person_group.set_attributes(data_people_groups[key])
+            self.db.add(person_group)
 
     def show_main_menu(self):
         menu = """Добро пожаловать!
@@ -89,6 +101,3 @@ class Main:
 
 m = Main()
 m.main_cycle()
-
-
-

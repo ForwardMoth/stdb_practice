@@ -1,19 +1,28 @@
-from dbtable import *
+from db import *
 
 
-class PhonesTable(DbTable):
-    def create(self):
-        phones = Table(self.table_name(), self.dbconn.metadata, self.column_id(), self.column_person_id(),
-                       self.column_phone())
+class PhonesTable(DataBase.Base):
+    __tablename__ = "phones"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    person_id = Column(Integer, ForeignKey("people.id"))
+    phone = Column(String(12), nullable=False)
 
-    def table_name(self):
-        return self.dbconn.prefix + "phones"
+    def __init__(self):
+        self.person_id = None
+        self.phone = None
 
-    def column_person_id(self):
-        return Column('person_id', ForeignKey(self.dbconn.prefix + "people.id"))
+    def set_attributes(self, data):
+        self.person_id = data["person_id"]
+        self.phone = data["phone"]
 
-    def column_phone(self):
-        return Column('phone', String(12), nullable=False)
+
+    # def create(self):
+    #     person_id = Column('person_id', ForeignKey(self.dbconn.prefix + "people.id"))
+    #     phone = Column('phone', String(12), nullable=False)
+    #     phones = Table(self.table_name(), self.dbconn.metadata, self.column_id(), person_id, phone)
+    #
+    # def table_name(self):
+    #     return self.dbconn.prefix + "phones"
 
 
     # def primary_key(self):

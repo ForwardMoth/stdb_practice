@@ -1,22 +1,22 @@
-from dbtable import *
+from db import *
 
 
-class GroupsTable(DbTable):
-    def create(self):
-        groups = Table(self.table_name(), self.dbconn.metadata, self.column_id(), self.column_group_name(),
-                       self.column_speciality(), self.column_department())
+class GroupsTable(DataBase.Base):
+    __tablename__ = "groups"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    group_name = Column(String(7), nullable=False)
+    speciality = Column(String(128), nullable=False)
+    department = Column(String(3), nullable=False)
 
-    def table_name(self):
-        return self.dbconn.prefix + "groups"
+    def __init__(self):
+        self.group_name = None
+        self.speciality = None
+        self.department = None
 
-    def column_group_name(self):
-        return Column('group_name', String(7), nullable=False)
-
-    def column_speciality(self):
-        return Column('speciality', String(128), nullable=False)
-
-    def column_department(self):
-        return Column('department', String(3), nullable=False)
+    def set_attributes(self, data):
+        self.group_name = data["group_name"]
+        self.speciality = data["speciality"]
+        self.department = data["department"]
 
 
 

@@ -1,16 +1,16 @@
-from dbtable import *
+from db import *
 
 
-class PeopleGroupsTable(DbTable):
-    def create(self):
-        people_groups = Table(self.table_name(), self.dbconn.metadata, self.column_person_id(),
-                              self.column_group_id())
+class PeopleGroupsTable(DataBase.Base):
+    __tablename__ = "people_groups"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    person_id = Column(Integer, ForeignKey("people.id"))
+    group_id = Column(Integer, ForeignKey("groups.id"))
 
-    def table_name(self):
-        return self.dbconn.prefix + "people_groups"
+    def __init__(self):
+        self.person_id = None
+        self.group_id = None
 
-    def column_person_id(self):
-        return Column('person_id', ForeignKey(self.dbconn.prefix + "people.id"))
-
-    def column_group_id(self):
-        return Column('group_id', ForeignKey(self.dbconn.prefix + "groups.id"))
+    def set_attributes(self, data):
+        self.person_id = data["person_id"]
+        self.group_id = data["group_id"]

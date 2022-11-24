@@ -1,24 +1,22 @@
-from dbtable import *
+from db import *
 
 
-class PeopleTable(DbTable):
-    def create(self):
-        people = Table(self.table_name(), self.dbconn.metadata, self.column_id(), self.column_last_name(),
-                       self.column_first_name(), self.column_second_name())
+class PeopleTable(DataBase.Base):
+    __tablename__ = "people"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    last_name = Column(String(32), nullable=False)
+    first_name = Column(String(32), nullable=False)
+    second_name = Column(String(32))
 
-    def table_name(self):
-        return self.dbconn.prefix + "people"
+    def __init__(self):
+        self.last_name = None
+        self.first_name = None
+        self.second_name = None
 
-    def column_last_name(self):
-        return Column('last_name', String(32), nullable=False)
-
-    def column_first_name(self):
-        return Column('first_name', String(32), nullable=False)
-
-    def column_second_name(self):
-        return Column('second_name', String(32))
-
-
+    def set_attributes(self, data):
+        self.last_name = data["last_name"]
+        self.first_name = data["first_name"]
+        self.second_name = data["second_name"]
 
     # def find_by_position(self, num):
     #     sql = "SELECT * FROM " + self.table_name()

@@ -33,10 +33,14 @@ class PeopleController:
     def show_people(self):
         self.person_id = -1
         menu = """Просмотр списка людей!"""
+        # здесь надо сделать получение списка групп для человека
+        lst = PeopleTable().all()
+        lst = PeopleGroupsTable.all()
+
+
         print(menu)
         columns = ["№", "Фамилия", "Имя", "Отчество", "Группа"]
         ReadWriter().formatted_print(columns)
-        lst = PeopleTable().all()
         for i in range(len(lst)):
             a = list(lst[i])[1:]
             a.insert(0, i + 1)

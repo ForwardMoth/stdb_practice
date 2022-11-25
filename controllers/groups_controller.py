@@ -37,9 +37,8 @@ class GroupsController:
         columns = ["№", "Группа", "Специальность", "Кафедра"]
         ReadWriter().formatted_print(columns)
         lst = GroupsTable().all()
-        for i in range(len(lst)):
-            a = list(lst[i])
-            a.insert(0, i + 1)
+        for group in lst:
+            a = [group.id, group.group_name, group.speciality, group.department]
             ReadWriter().formatted_print(a)
         return
 
@@ -71,7 +70,7 @@ class GroupsController:
             if not num.strip().isnumeric():
                 print("Неверные данные. Повторите ввод! ")
 
-            group = GroupsTable().find_by_position(int(num))
+            group = GroupsTable().find_by_id(int(num))
             if not group:
                 print("Введено число, неудовлетворяющее количеству телефонов!")
             else:

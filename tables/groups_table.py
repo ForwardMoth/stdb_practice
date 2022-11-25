@@ -1,7 +1,7 @@
 from db import *
 
 
-class GroupsTable(DataBase.Base):
+class GroupsTable(DataBase.Base, DataBase):
     __tablename__ = "groups"
     id = Column(Integer, primary_key=True, autoincrement=True)
     group_name = Column(String(7), nullable=False)
@@ -18,6 +18,8 @@ class GroupsTable(DataBase.Base):
         self.speciality = data["speciality"]
         self.department = data["department"]
 
+    def all(self):
+        return self.session.query(GroupsTable).all()
 
 
     # def primary_key(self):

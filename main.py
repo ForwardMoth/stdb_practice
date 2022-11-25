@@ -25,7 +25,7 @@ class Main:
         for key in data_people:
             person = PeopleTable()
             person.set_attributes(data_people[key])
-            self.db.add(person)
+            person.add()
 
         data_groups = {
             "1": {"group_name": "C19-702", "speciality": "ИАСБ", "department": "75"},
@@ -36,7 +36,7 @@ class Main:
         for key in data_groups:
             group = GroupsTable()
             group.set_attributes(data_groups[key])
-            self.db.add(group)
+            group.add()
 
         data_phones = {
             "1": {"person_id": 1, "phone": "123"},
@@ -47,7 +47,7 @@ class Main:
         for key in data_phones:
             phone = PhonesTable()
             phone.set_attributes(data_phones[key])
-            self.db.add(phone)
+            phone.add()
 
         data_people_groups = {
             "1": {"person_id": 1, "group_id": 1},
@@ -58,7 +58,7 @@ class Main:
         for key in data_people_groups:
             person_group = PeopleGroupsTable()
             person_group.set_attributes(data_people_groups[key])
-            self.db.add(person_group)
+            person_group.add()
 
     def show_main_menu(self):
         menu = """Добро пожаловать!
@@ -85,9 +85,9 @@ class Main:
                 self.show_main_menu()
                 current_menu = ReadWriter().read_next_step()
             elif current_menu == "1":
-                current_menu = PeopleController().people_actions()
+                current_menu = PeopleController().people_actions() # не готово
             elif current_menu == "2":
-                current_menu = GroupsController().group_actions()
+                current_menu = GroupsController().group_actions() # не готово
             elif current_menu == "3":
                 current_menu = PeopleController().find_people_by_lastname()
             elif current_menu == "8":
@@ -101,3 +101,5 @@ class Main:
 
 m = Main()
 m.main_cycle()
+
+

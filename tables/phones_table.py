@@ -1,7 +1,7 @@
 from db import *
 
 
-class PhonesTable(DataBase.Base):
+class PhonesTable(DataBase.Base, DataBase):
     __tablename__ = "phones"
     id = Column(Integer, primary_key=True, autoincrement=True)
     person_id = Column(Integer, ForeignKey("people.id"))
@@ -15,6 +15,10 @@ class PhonesTable(DataBase.Base):
         self.person_id = data["person_id"]
         self.phone = data["phone"]
 
+    def delete_depended(self, person_id):
+        self.session.query(PhonesTable).filter(PhonesTable.id == person_id).delete(synchronize_session='fetch')
+        self.session.commit()
+
 
     # def create(self):
     #     person_id = Column('person_id', ForeignKey(self.dbconn.prefix + "people.id"))
@@ -23,7 +27,6 @@ class PhonesTable(DataBase.Base):
     #
     # def table_name(self):
     #     return self.dbconn.prefix + "phones"
-
 
     # def primary_key(self):
     #     return ['person_id', 'phone']

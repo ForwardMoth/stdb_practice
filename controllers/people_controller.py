@@ -23,9 +23,11 @@ class PeopleController:
                 print("Слишком длинная фамилия. Повторите ввод! ")
             if last_name == "0":
                 return "0"
-            person = PeopleTable().find_by_last_name(last_name)
-            if person is not None:
-                print("Выбран человек: " + person[3] + " " + person[0] + " " + person[4])
+            records = PeopleTable().find_by_last_name(last_name)
+            if records is not None:
+                print("Найдены записи")
+                for person in records:
+                    print(person.last_name + " " + person.first_name + " " + person.second_name)
                 return "0"
             else:
                 print("Запись не найдена! Повторите ввод! ")
@@ -33,18 +35,18 @@ class PeopleController:
     def show_people(self):
         self.person_id = -1
         menu = """Просмотр списка людей!"""
-        # здесь надо сделать получение списка групп для человека
-        lst = PeopleTable().all()
-        lst = PeopleGroupsTable.all()
-
-
         print(menu)
-        columns = ["№", "Фамилия", "Имя", "Отчество", "Группа"]
+        columns = ["id", "Фамилия", "Имя", "Отчество", "Группа"]
         ReadWriter().formatted_print(columns)
-        for i in range(len(lst)):
-            a = list(lst[i])[1:]
-            a.insert(0, i + 1)
+        lst = PeopleGroupsTable().get_people_groups()
+        i = 0
+        for people_group, people, groups in lst:
+            group_name = None
+            if groups is not None:
+                group_name = groups.group_name
+            a = [people.id, people.last_name, people.first_name, people.second_name, group_name]
             ReadWriter().formatted_print(a)
+            i += 1
         return
 
     # Добавление человека
@@ -58,17 +60,17 @@ class PeopleController:
         second_name = self.ph.form_second_name()
         if second_name is None:
             return "-1"
-        data = [last_name, first_name, second_name, "NULL"]
-        # Проверяем элементы на пустоту (в случае отмены ввода)
-        for i in data:
-            if i is None:
-                return "-1"
-        PeopleTable().insert_one(data)
+        data = {"last_name": last_name, "first_name": first_name, "second_name": second_name}
+        person = PeopleTable()
+        person.set_attributes(data)
+        person.add()
         return "-1"
 
     def delete_person(self):
         if self.find_person() == "0":
-            PeopleTable().delete(self.person_id)
+            PhonesTable().delete_depended(self.person_id)
+            PeopleGroupsTable().delete_depended(self.person_id)
+            self.person_obj.delete()
         return "-1"
 
     def find_person(self):
@@ -81,11 +83,11 @@ class PeopleController:
             # проверка на то, что строка состоит из цифр
             if not num.strip().isnumeric():
                 print("Неверный данные. Повторите ввод! ")
-            person = PeopleTable().find_by_position(int(num))
+            person = PeopleTable().find_by_id(int(num))
             if not person:
                 print("Введено число, неудовлетворяющее количеству людей!")
             else:
-                self.person_id = int(person[2])
+                self.person_id = person.id
                 self.person_obj = person
                 return "0"
 
@@ -103,32 +105,43 @@ class PeopleController:
                     return "-1"
                 else:
                     print("Выбрано неверное значение! Повторите ввод!")
-
+            data = {}
             if step == "1":
-                last_name = self.ph.form_last_name()
-                if last_name is None:
+                data['last_name'] = self.ph.form_last_name()
+                if data['last_name'] is None:
                     return "-1"
-                values_for_edit = [last_name, self.person_id, "last_name"]
             elif step == "2":
-                first_name = self.ph.form_first_name()
-                if first_name is None:
+                data['first_name'] = self.ph.form_first_name()
+                if data['first_name'] is None:
                     return "-1"
-                values_for_edit = [first_name, self.person_id, "first_name"]
             else:
-                second_name = self.ph.form_second_name()
-                if second_name is None:
+                data['second_name'] = self.ph.form_second_name()
+                if data['second_name'] is None:
                     return "-1"
-                values_for_edit = [second_name, self.person_id, "second_name"]
-            if len(values_for_edit) == 3:
-                PeopleTable().update(values_for_edit)
+            if len(data) > 0:
+                PeopleTable().update_value(data, self.person_id)
         return "-1"
 
     def add_person_in_group(self):
         if self.find_person() == "0":
             self.gc.show_groups()
             if self.gc.find_group_by_id() is None:
-                PeopleTable().update([self.group_obj[0], self.person_id, "group_name"])
+                data = {"person_id": self.person_id, "group_id": self.gc.group_obj.id}
+                person_group = PeopleGroupsTable()
+                person_group.set_attributes(data)
+                person_group.add()
         return "-1"
+    """Доработать функцию"""
+    # def delete_person_in_group(self):
+    #     if self.find_person() == "0":
+    #         lst = PeopleGroupsTable().get_groups_by_person(self.person_id)
+    #         for person_group, group in lst:
+    #             a = [group.id, group.group_name, group.speciality, group.department]
+    #             ReadWriter().formatted_print(a)
+
+            # показать список групп по человеку
+            # выбор группы из того списка
+            # удаление человека из группы
 
     def people_actions(self):
         current_step = "-1"
@@ -145,14 +158,13 @@ class PeopleController:
                 code = "-1"
                 if self.person_id == -1:
                     code = self.find_person()
-                current_step = PhonesController(self.person_obj).phone_actions(code)
+                current_step = PhonesController(self.person_obj).phone_actions(code) # не готово
             elif current_step == "6":
                 current_step = self.edit_person()
             elif current_step == "7":
                 current_step = self.add_person_in_group()
             elif current_step == "8":
-                print("Не реализовано! ")
-                current_step = "-1"
+                current_step = self.delete_person_in_group()
             elif current_step == "0":
                 return "0"
             elif current_step == "9":

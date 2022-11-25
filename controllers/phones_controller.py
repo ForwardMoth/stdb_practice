@@ -6,8 +6,6 @@ from helpers.phonesHelper import *
 class PhonesController:
     def __init__(self, person_obj):
         self.ph = PhonesHelper()
-        self.phone_id = None
-        self.phone_obj = None
         self.person_id = person_obj[2]
         self.person_obj = person_obj
 
@@ -49,7 +47,7 @@ class PhonesController:
             if not num.strip().isnumeric():
                 print("Неверные данные. Повторите ввод! ")
 
-            phone = PhonesTable().find_by_position(int(num), self.person_id)
+            phone = PhonesTable().find_by_id(int(num), self.person_id)
             if not phone:
                 print("Введено число, неудовлетворяющее количеству телефонов!")
             else:

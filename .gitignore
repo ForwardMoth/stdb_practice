@@ -2,3 +2,5 @@ __pycache__
 .idea
 tables/__pycache__
 project.db
+venv
+configs/config.yaml

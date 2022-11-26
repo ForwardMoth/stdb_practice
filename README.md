@@ -30,3 +30,40 @@ git checkout postgres
 - Просмотр списка группы
 - Просмотр списка групп для человека 
 - Реализация отношения M:M для таблиц группы и люди
+
+### Важно! Настройка СУБД postgres. Linux или Windows.
+
+- Скачиваем и устанавливаем [PostgreSQL](https://www.postgresql.org/download/)
+
+- Заходим в консоль psql 
+
+Для Windows:
+
+1. Добавляем переменную среды окружения Windows путь к папке bin в вашей установленной версии Postgres: 
+(у меня: C:\Program Files\PostgreSQL\14\bin)
+2. Заходим в консоль и пишем: 
+```cmd 
+psql -U postgres 
+```
+
+Для Linux: 
+```bash 
+sudo -u postgres psql 
+```
+
+- Создаём пользователя и задаем пароль: 
+
+```cmd 
+CREATE ROLE "user" WITH LOGIN PASSWORD '1111';
+```
+
+- Создаём базу данных и связываем её с пользователем 
+
+```cmd 
+create database testdb;
+```
+
+```cmd 
+grant all privileges on database testdb to "user";
+```
+

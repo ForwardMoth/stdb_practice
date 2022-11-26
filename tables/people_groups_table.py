@@ -22,7 +22,7 @@ class PeopleGroupsTable(DataBase.Base, DataBase):
         query = query.outerjoin(GroupsTable, GroupsTable.id == PeopleGroupsTable.group_id)
         return query.order_by(PeopleTable.id).all()
 
-    def delete_depended(self, person_id):
+    def delete_depended_person(self, person_id):
         self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == person_id). \
             delete(synchronize_session='fetch')
         self.session.commit()
@@ -42,3 +42,14 @@ class PeopleGroupsTable(DataBase.Base, DataBase):
         self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == p_id,
                                                      PeopleGroupsTable.group_id == g_id).delete()
         self.session.commit()
+
+    def delete_depended_group(self, group_id):
+        self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.group_id == group_id). \
+            delete(synchronize_session='fetch')
+        self.session.commit()
+
+    def get_people_by_group(self, g_id):
+        query = self.session.query(PeopleGroupsTable, PeopleTable, GroupsTable)
+        query = query.outerjoin(PeopleGroupsTable, PeopleGroupsTable.person_id == PeopleTable.id)
+        query = query.outerjoin(GroupsTable, GroupsTable.id == PeopleGroupsTable.group_id)
+        return query.filter(GroupsTable.id == g_id).all()

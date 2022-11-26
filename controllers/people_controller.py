@@ -70,7 +70,7 @@ class PeopleController:
     def delete_person(self):
         if self.find_person() == "0":
             PhonesTable().delete_depended(self.person_id)
-            PeopleGroupsTable().delete_depended(self.person_id)
+            PeopleGroupsTable().delete_depended_person(self.person_id)
             self.person_obj.delete()
         return "-1"
 
@@ -94,7 +94,6 @@ class PeopleController:
 
     def edit_person(self):
         if self.find_person() == "0":
-            values_for_edit = []
             step = "-1"
             while True:
                 if step == "-1":
@@ -126,7 +125,7 @@ class PeopleController:
     def add_person_in_group(self):
         if self.find_person() == "0":
             lst = GroupsTable().all()
-            if lst is not None:
+            if len(lst) > 0:
                 self.gc.show_groups(lst)
                 if self.gc.find_group_by_id() is None:
                     data = {"person_id": self.person_id, "group_id": self.gc.group_obj.id}
@@ -140,7 +139,7 @@ class PeopleController:
     def delete_person_in_group(self):
         if self.find_person() == "0":
             lst = PeopleGroupsTable().get_groups_by_person(self.person_id)
-            if lst is not None:
+            if len(lst) > 0:
                 lst_group = []
                 for people_group, people, groups in lst:
                     lst_group.append(groups)

@@ -1,7 +1,10 @@
+from helpers.readWriterHelper import *
+
 class GroupsHelper:
     def show_group_menu(self):
         menu = """Дальнейшие операции:
         0 - Возврат в главное меню;
+        2 - Просмотр списка группы;
         3 - Добавление новой группы;
         4 - Изменение номера группы
         5 - Изменение специальности группы;
@@ -46,3 +49,14 @@ class GroupsHelper:
                 print("Отчество имеет недопустимую длину!")
             else:
                 return second_name
+
+    def show_people(self, lst):
+        menu = """Просмотр списка людей!"""
+        print(menu)
+        columns = ["id", "Фамилия", "Имя", "Отчество"]
+        ReadWriter().formatted_print(columns)
+        i = 0
+        for people_group, people, groups in lst:
+            a = [people.id, people.last_name, people.first_name, people.second_name]
+            ReadWriter().formatted_print(a)
+            i += 1

@@ -1,4 +1,5 @@
 from tables.groups_table import *
+from tables.people_groups_table import *
 from helpers.readWriterHelper import *
 from helpers.groupsHelper import *
 
@@ -15,6 +16,8 @@ class GroupsController:
                 self.show_groups(lst)
                 self.gh.show_group_menu()
                 current_step = ReadWriter().read_next_step()
+            elif current_step == "2":
+                current_step = self.show_people_in_group()
             elif current_step == "3":
                 current_step = self.add_group()
             elif current_step in ["4", "5", "6"]:
@@ -53,17 +56,16 @@ class GroupsController:
         department = self.gh.form_department()
         if department is None:
             return "-1"
-        data = [group_name, speciality, department]
-        for i in data:
-            if i is None:
-                return "-1"
-        GroupsTable().insert_one(data)
+        data = {"group_name": group_name, "speciality": speciality, "department": department}
+        group = GroupsTable()
+        group.set_attributes(data)
+        group.add()
         return "-1"
 
     def find_group_by_id(self):
         num = -1
         while True:
-            num = input("Укажите номер строки, в которой записан интересующий Вас номер группы (0 - отмена): ")
+            num = input("Укажите номер id, в которой записан интересующий Вас номер группы (0 - отмена): ")
             if len(num.strip()) == 0:
                 print("Пустая строка. Повторите ввод! ")
             if num == "0":
@@ -73,34 +75,41 @@ class GroupsController:
 
             group = GroupsTable().find_by_id(int(num))
             if not group:
-                print("Введено число, неудовлетворяющее количеству телефонов!")
+                print("Введено число, неудовлетворяющее существующим id!")
             else:
                 self.group_obj = group
                 break
 
     def edit_group(self, step):
         if self.find_group_by_id() is None:
-            values_for_edit = []
+            data = {}
             if step == "4":
-                group_name = self.gh.form_group_name()
-                if group_name is None:
+                data['group_name'] = self.gh.form_group_name()
+                if data['group_name'] is None:
                     return "-1"
-                values_for_edit = [group_name, self.group_obj[0], "group_name"]
             elif step == "5":
-                speciality = self.gh.form_speciality()
-                if speciality is None:
+                data['speciality'] = self.gh.form_speciality()
+                if data['speciality'] is None:
                     return "-1"
-                values_for_edit = [speciality, self.group_obj[0], "speciality"]
             else:
-                department = self.gh.form_department()
-                if department is None:
+                data['department'] = self.gh.form_department()
+                if data['department'] is None:
                     return "-1"
-                values_for_edit = [department, self.group_obj[0], "department"]
-            if len(values_for_edit) == 3:
-                GroupsTable().update(values_for_edit)
+            if len(data) > 0:
+                GroupsTable().update_value(data, self.group_obj.id)
         return "-1"
 
     def delete_group(self):
         if self.find_group_by_id() is None:
-            GroupsTable().delete(self.group_obj[0])
+            PeopleGroupsTable().delete_depended_group(self.group_obj.id)
+            self.group_obj.delete()
+        return "-1"
+
+    def show_people_in_group(self):
+        if self.find_group_by_id() is None:
+            lst = PeopleGroupsTable().get_people_by_group(self.group_obj.id)
+            if len(lst) > 0:
+                self.gh.show_people(lst)
+            else:
+                print("В группе нет обучающихся!")
         return "-1"

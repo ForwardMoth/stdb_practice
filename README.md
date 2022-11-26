@@ -9,8 +9,12 @@
 
 -- Ветка master содержит вариант реализации на SQLite. Для перехода в неёЖ: 
 
-```git checkout master```
+```git 
+git checkout master
+```
 
 -- Ветка postgres содержит вариант реализации на PostgreSQL. Для перехода в неё:
 
-```git checkout postgres```
+```git 
+git checkout postgres
+```

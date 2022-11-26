@@ -50,7 +50,6 @@ class PeopleController:
             i += 1
         return
 
-    # Добавление человека
     def add_person(self):
         last_name = self.ph.form_last_name()
         if last_name is None:
@@ -135,7 +134,7 @@ class PeopleController:
             else:
                 print("Группы не найдены!")
         return "-1"
-    """Доработать функцию"""
+
     def delete_person_in_group(self):
         if self.find_person() == "0":
             lst = PeopleGroupsTable().get_groups_by_person(self.person_id)
@@ -163,7 +162,7 @@ class PeopleController:
                 code = "-1"
                 if self.person_id == -1:
                     code = self.find_person()
-                current_step = PhonesController(self.person_obj).phone_actions(code) # не готово
+                current_step = PhonesController(self.person_obj).phone_actions(code)
             elif current_step == "6":
                 current_step = self.edit_person()
             elif current_step == "7":

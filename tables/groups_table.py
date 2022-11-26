@@ -18,6 +18,5 @@ class GroupsTable(DataBase.Base, DataBase):
         self.speciality = data["speciality"]
         self.department = data["department"]
 
-    def all(self):
-        return self.session.query(GroupsTable).all()
+
 

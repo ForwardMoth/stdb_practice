@@ -1,5 +1,6 @@
 from helpers.readWriterHelper import *
 
+
 class GroupsHelper:
     def show_group_menu(self):
         menu = """Дальнейшие операции:

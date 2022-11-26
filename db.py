@@ -33,3 +33,5 @@ class DataBase:
         self.session.query(self.__class__).filter(self.__class__.id == id).update(data)
         self.session.commit()
 
+    def all(self):
+        return self.session.query(self.__class__).all()

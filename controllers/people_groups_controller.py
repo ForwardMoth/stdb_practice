@@ -1,5 +1,6 @@
 from tables.people_groups_table import *
 
+
 class PeopleGroupController:
     def __init__(self):
         self.people_group_obj = None

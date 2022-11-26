@@ -18,3 +18,11 @@ class PhonesTable(DataBase.Base, DataBase):
     def delete_depended(self, person_id):
         self.session.query(PhonesTable).filter(PhonesTable.id == person_id).delete(synchronize_session='fetch')
         self.session.commit()
+
+    def phones_by_person(self, person_id):
+        return self.session.query(PhonesTable).filter(PhonesTable.person_id == person_id).all()
+
+    def find_by_phone_person(self, person_id, phone_id):
+        query = self.session.query(PhonesTable).filter(PhonesTable.person_id == person_id,
+                                                       PhonesTable.id == phone_id)
+        return query.all()

@@ -23,12 +23,22 @@ class PeopleGroupsTable(DataBase.Base, DataBase):
         return query.order_by(PeopleTable.id).all()
 
     def delete_depended(self, person_id):
-        self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == person_id).\
+        self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == person_id). \
             delete(synchronize_session='fetch')
         self.session.commit()
 
     def get_groups_by_person(self, per_id):
-        query = self.session.query(PeopleGroupsTable, GroupsTable)
+        query = self.session.query(PeopleGroupsTable, PeopleTable, GroupsTable)
+        query = query.outerjoin(PeopleGroupsTable, PeopleGroupsTable.person_id == PeopleTable.id)
         query = query.outerjoin(GroupsTable, GroupsTable.id == PeopleGroupsTable.group_id)
-        query = self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == per_id)
-        return query.order_by().all()
+        return query.filter(PeopleTable.id == per_id).all()
+
+    def find_by_person_and_group(self, p_id, g_id):
+        query = self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == p_id,
+                                                             PeopleGroupsTable.group_id == g_id)
+        return query.all()
+
+    def delete_group_by_person(self, p_id, g_id):
+        self.session.query(PeopleGroupsTable).filter(PeopleGroupsTable.person_id == p_id,
+                                                     PeopleGroupsTable.group_id == g_id).delete()
+        self.session.commit()

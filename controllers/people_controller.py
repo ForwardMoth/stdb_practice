@@ -10,6 +10,7 @@ class PeopleController:
     def __init__(self):
         self.gc = GroupsController()
         self.ph = PeopleHelper()
+        self.pgc = PeopleGroupController()
         self.group_obj = None
         self.person_id = None
         self.person_obj = None
@@ -124,24 +125,29 @@ class PeopleController:
 
     def add_person_in_group(self):
         if self.find_person() == "0":
-            self.gc.show_groups()
-            if self.gc.find_group_by_id() is None:
-                data = {"person_id": self.person_id, "group_id": self.gc.group_obj.id}
-                person_group = PeopleGroupsTable()
-                person_group.set_attributes(data)
-                person_group.add()
+            lst = GroupsTable().all()
+            if lst is not None:
+                self.gc.show_groups(lst)
+                if self.gc.find_group_by_id() is None:
+                    data = {"person_id": self.person_id, "group_id": self.gc.group_obj.id}
+                    person_group = PeopleGroupsTable()
+                    person_group.set_attributes(data)
+                    person_group.add()
+            else:
+                print("Группы не найдены!")
         return "-1"
     """Доработать функцию"""
-    # def delete_person_in_group(self):
-    #     if self.find_person() == "0":
-    #         lst = PeopleGroupsTable().get_groups_by_person(self.person_id)
-    #         for person_group, group in lst:
-    #             a = [group.id, group.group_name, group.speciality, group.department]
-    #             ReadWriter().formatted_print(a)
-
-            # показать список групп по человеку
-            # выбор группы из того списка
-            # удаление человека из группы
+    def delete_person_in_group(self):
+        if self.find_person() == "0":
+            lst = PeopleGroupsTable().get_groups_by_person(self.person_id)
+            if lst is not None:
+                lst_group = []
+                for people_group, people, groups in lst:
+                    lst_group.append(groups)
+                self.gc.show_groups(lst_group)
+                if self.pgc.find_person_group(self.person_id) is None:
+                    self.pgc.people_group_obj.delete()
+        return "-1"
 
     def people_actions(self):
         current_step = "-1"

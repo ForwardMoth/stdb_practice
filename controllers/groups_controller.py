@@ -11,7 +11,8 @@ class GroupsController:
         current_step = "-1"
         while True:
             if current_step == "-1":
-                self.show_groups()
+                lst = GroupsTable().all()
+                self.show_groups(lst)
                 self.gh.show_group_menu()
                 current_step = ReadWriter().read_next_step()
             elif current_step == "3":
@@ -32,11 +33,11 @@ class GroupsController:
                 current_step = ReadWriter().read_next_step()
 
 
-    def show_groups(self):
-        menu = """Просмотр списка групп!\n"""
+    def show_groups(self, lst):
+        menu = """Просмотр списка групп!"""
+        print(menu)
         columns = ["№", "Группа", "Специальность", "Кафедра"]
         ReadWriter().formatted_print(columns)
-        lst = GroupsTable().all()
         for group in lst:
             a = [group.id, group.group_name, group.speciality, group.department]
             ReadWriter().formatted_print(a)

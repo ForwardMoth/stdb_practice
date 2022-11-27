@@ -37,19 +37,19 @@ git checkout postgres
 
 - Заходим в консоль psql 
 
-Для Windows:
+  - Для Windows:
 
-1. Добавляем переменную среды окружения Windows путь к папке bin в вашей установленной версии Postgres: 
-(у меня: C:\Program Files\PostgreSQL\14\bin)
-2. Заходим в консоль и пишем: 
-```cmd 
-psql -U postgres 
-```
+    1. Добавляем переменную среды окружения Windows путь к папке bin в вашей установленной версии Postgres: 
+    (у меня: C:\Program Files\PostgreSQL\14\bin)
+    2. Заходим в консоль и пишем: 
+    ```cmd 
+    psql -U postgres 
+    ```
 
-Для Linux: 
-```bash 
-sudo -u postgres psql 
-```
+  - Для Linux: 
+    ```bash 
+    sudo -u postgres psql 
+    ```
 
 - Создаём пользователя и задаем пароль: 
 

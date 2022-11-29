@@ -1,5 +1,7 @@
 # Проект по курсу "Специальные технологии баз данных и информационных систем"
 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ForwardMoth/stdb_practice/blob/postgres/README.en.md)
+
 ## Описание проекта: 
 
 Создание c использованием языка python и библиотек базы данных и взаимодействия с ней. 

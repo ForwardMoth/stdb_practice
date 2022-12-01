@@ -21,7 +21,7 @@ There is not all functionality is presented here:
 
 - A 1:1 ratio is implemented for the groups and people tables
 
-### The branch postgres contains an realisation on DBMS PostgreSQL. To switch in terminal: 
+## The branch postgres contains an realisation on DBMS PostgreSQL. To switch in terminal: 
 
 ```git 
 git checkout postgres

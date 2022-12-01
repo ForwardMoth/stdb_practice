@@ -1,5 +1,7 @@
 # Вторая часть проекта реализованная на СУБД SQLite
 
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/ForwardMoth/stdb_practice/blob/master/README.en.md)
+
 ## Здесь поддерживаются операции:
 
 ### Для людей:

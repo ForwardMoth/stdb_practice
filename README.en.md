@@ -33,6 +33,30 @@ There is all functionality is presented here:
 - Viewing a list of groups for a person (all groups for a person)
 - Implementation of the M:M relationship for the groups and people tables
 
+## Also operations are supported here:
+
+### For people:
+
+- Adding
+- View
+- Editing information
+- Removal
+- Search by last name
+
+### For phones:
+
+- Adding
+- View by person
+- Editing
+- Removal
+
+### For groups:
+
+- Adding
+- View
+- Editing information
+- Removal
+
 ### Important! Configuring DBMS postgresql. Linux or Windows
 
 - Download and install [PostgreSQL](https://www.postgresql.org/download/)
